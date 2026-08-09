@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri&family=Aref+Ruqaa&family=Cairo&family=Changa&family=El+Messiri&family=Lateef&family=Noto+Kufi+Arabic&family=Noto+Naskh+Arabic&family=Reem+Kufi&family=Rakkas&family=Tajawal&family=Scheherazade+New&family=Katibeh&family=Lemonada&family=Mada&family=Markazi+Text&family=Mirza&family=Readex+Pro&family=Almarai&family=Harmattan&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background:
+        radial-gradient(circle at 20% 20%, #5b21b6 0%, transparent 30%),
+        radial-gradient(circle at 80% 80%, #0369a1 0%, transparent 30%),
+        linear-gradient(135deg, #050505, #111827, #020617);
+    background-size: 200% 200%;
+    animation: backgroundMove 12s ease infinite;
+}
+
+@keyframes backgroundMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    width: min(1100px, 92%);
+    margin: auto;
+    padding: 35px 0;
+}
+
+h1 {
+    font-size: clamp(30px, 6vw, 55px);
+    margin-bottom: 8px;
+    animation: fadeDown .8s ease;
+}
+
+.subtitle {
+    opacity: .7;
+    margin-bottom: 30px;
+}
+
+.editor {
+    padding: 25px;
+    border-radius: 25px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    animation: fadeUp .8s ease;
+}
+
+textarea {
+    width: 100%;
+    min-height: 130px;
+    padding: 18px;
+    border: none;
+    outline: none;
+    resize: vertical;
+    border-radius: 15px;
+    background: rgba(0,0,0,.35);
+    color: white;
+    font-size: 25px;
+    direction: rtl;
+}
+
+textarea:focus {
+    box-shadow: 0 0 0 2px #8b5cf6;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+select,
+input,
+button {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+}
+
+select {
+    min-width: 220px;
+}
+
+button {
+    background: #7c3aed;
+    color: white;
+    cursor: pointer;
+    transition: .25s;
+}
+
+button:hover {
+    transform: translateY(-3px) scale(1.03);
+    background: #8b5cf6;
+    box-shadow: 0 10px 25px rgba(124,58,237,.35);
+}
+
+.preview-box {
+    margin-top: 25px;
+    padding: 15px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.06);
+}
+
+#preview {
+    min-height: 180px;
+    padding: 45px 25px;
+    border-radius: 15px;
+    background: white;
+    color: black;
+    font-size: 70px;
+    direction: rtl;
+    overflow-wrap: break-word;
+    transition: font-family .3s ease, color .3s ease, font-size .3s ease;
+}
+
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media(max-width:600px) {
+
+    .editor {
+        padding: 15px;
+    }
+
+    #preview {
+        font-size: 50px;
+        padding: 35px 15px;
+    }
+
+    select,
+    button {
+        width: 100%;
+    }
+}
