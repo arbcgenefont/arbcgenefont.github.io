@@ -1,140 +1,64 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Arabic Font Generator</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Aref+Ruqaa&family=Cairo&family=Changa&family=El+Messiri&family=Lateef&family=Noto+Kufi+Arabic&family=Noto+Naskh+Arabic&family=Reem+Kufi&family=Rakkas&family=Tajawal&family=Scheherazade+New&display=swap" rel="stylesheet">
-
-<style>
-body {
-    margin: 0;
-    padding: 25px;
-    background: #111;
-    color: white;
-    font-family: Arial;
-    text-align: center;
-}
-
-h1 {
-    font-size: 32px;
-}
-
-textarea {
-    width: 90%;
-    max-width: 800px;
-    height: 120px;
-    padding: 15px;
-    font-size: 25px;
-    direction: rtl;
-    border-radius: 12px;
-    border: none;
-    resize: vertical;
-}
-
-.controls {
-    margin: 20px;
-}
-
-select, button, input {
-    padding: 12px;
-    margin: 6px;
-    border-radius: 10px;
-    border: none;
-    font-size: 16px;
-}
-
-#preview {
-    margin: 30px auto;
-    padding: 50px 20px;
-    max-width: 900px;
-    min-height: 100px;
-    background: white;
-    color: black;
-    border-radius: 15px;
-    font-size: 70px;
-    direction: rtl;
-    overflow-wrap: break-word;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>مولد الخط العربي</h1>
+<main class="container">
 
-<textarea id="text">السلام عليكم</textarea>
+<h1>مولد الخط العربي</h1>
+<p class="subtitle">اكتب النص واختر الخط</p>
+
+<section class="editor">
+
+<textarea id="text" placeholder="اكتب النص هنا">السلام عليكم</textarea>
 
 <div class="controls">
 
 <select id="font">
-    <option value="Amiri">Amiri</option>
-    <option value="Aref Ruqaa">Aref Ruqaa</option>
-    <option value="Cairo">Cairo</option>
-    <option value="Changa">Changa</option>
-    <option value="El Messiri">El Messiri</option>
-    <option value="Lateef">Lateef</option>
-    <option value="Noto Kufi Arabic">Noto Kufi Arabic</option>
-    <option value="Noto Naskh Arabic">Noto Naskh Arabic</option>
-    <option value="Reem Kufi">Reem Kufi</option>
-    <option value="Rakkas">Rakkas</option>
-    <option value="Tajawal">Tajawal</option>
-    <option value="Scheherazade New">Scheherazade New</option>
+<option value="Amiri">Amiri</option>
+<option value="Aref Ruqaa">Aref Ruqaa</option>
+<option value="Cairo">Cairo</option>
+<option value="Changa">Changa</option>
+<option value="El Messiri">El Messiri</option>
+<option value="Lateef">Lateef</option>
+<option value="Noto Kufi Arabic">Noto Kufi Arabic</option>
+<option value="Noto Naskh Arabic">Noto Naskh Arabic</option>
+<option value="Reem Kufi">Reem Kufi</option>
+<option value="Rakkas">Rakkas</option>
+<option value="Tajawal">Tajawal</option>
+<option value="Scheherazade New">Scheherazade New</option>
+<option value="Katibeh">Katibeh</option>
+<option value="Lemonada">Lemonada</option>
+<option value="Mada">Mada</option>
+<option value="Markazi Text">Markazi Text</option>
+<option value="Mirza">Mirza</option>
+<option value="Readex Pro">Readex Pro</option>
+<option value="Almarai">Almarai</option>
+<option value="Harmattan">Harmattan</option>
 </select>
 
 <input type="color" id="color" value="#000000">
 
-<button onclick="downloadPNG()">تحميل PNG</button>
+<button id="download">تحميل PNG</button>
 
 </div>
 
+<div class="preview-box">
 <div id="preview">السلام عليكم</div>
+</div>
+
+</section>
+
+</main>
 
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
-<script>
-
-const text = document.getElementById("text");
-const font = document.getElementById("font");
-const color = document.getElementById("color");
-const preview = document.getElementById("preview");
-
-function updatePreview() {
-
-    preview.textContent = text.value;
-
-    preview.style.fontFamily =
-        '"' + font.value + '", sans-serif';
-
-    preview.style.color = color.value;
-}
-
-text.addEventListener("input", updatePreview);
-font.addEventListener("change", updatePreview);
-color.addEventListener("input", updatePreview);
-
-updatePreview();
-
-function downloadPNG() {
-
-    html2canvas(preview, {
-        backgroundColor: null,
-        scale: 2
-    }).then(canvas => {
-
-        const link = document.createElement("a");
-
-        link.download = "arabic-design.png";
-
-        link.href = canvas.toDataURL("image/png");
-
-        link.click();
-    });
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
