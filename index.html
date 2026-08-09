@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arabic Font Generator</title>
+
+<style>
+body {
+  margin: 0;
+  background: #111;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 25px;
+}
+
+textarea {
+  width: 90%;
+  height: 120px;
+  font-size: 28px;
+  direction: rtl;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+select, button {
+  margin: 15px 5px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+}
+
+#preview {
+  margin: 30px auto;
+  padding: 40px;
+  max-width: 900px;
+  background: white;
+  color: black;
+  font-size: 70px;
+  direction: rtl;
+  border-radius: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>مولد الخط العربي</h1>
+
+<textarea id="text">اكتب النص هنا</textarea>
+
+<br>
+
+<select id="font">
+  <option value="Arial">Arial</option>
+  <option value="serif">Serif</option>
+  <option value="sans-serif">Sans</option>
+  <option value="Georgia">Georgia</option>
+</select>
+
+<button onclick="downloadPNG()">تحميل PNG</button>
+
+<div id="preview">اكتب النص هنا</div>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+<script>
+const text = document.getElementById("text");
+const font = document.getElementById("font");
+const preview = document.getElementById("preview");
+
+text.addEventListener("input", update);
+font.addEventListener("change", update);
+
+function update() {
+  preview.textContent = text.value;
+  preview.style.fontFamily = font.value;
+}
+
+function downloadPNG() {
+  html2canvas(preview).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "arabic-design.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+}
+</script>
+
+</body>
+</html>
