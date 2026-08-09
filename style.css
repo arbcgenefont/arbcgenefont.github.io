@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Amiri&family=Aref+Ruqaa&family=Cairo&family=Changa&family=El+Messiri&family=Lateef&family=Noto+Kufi+Arabic&family=Noto+Naskh+Arabic&family=Reem+Kufi&family=Rakkas&family=Tajawal&family=Scheherazade+New&family=Katibeh&family=Lemonada&family=Mada&family=Markazi+Text&family=Mirza&family=Readex+Pro&family=Almarai&family=Harmattan&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Almarai&family=Amiri&family=Aref+Ruqaa&family=Cairo&family=Changa&family=El+Messiri&family=Harmattan&family=Katibeh&family=Lateef&family=Lemonada&family=Mada&family=Markazi+Text&family=Mirza&family=Noto+Kufi+Arabic&family=Noto+Naskh+Arabic&family=Readex+Pro&family=Reem+Kufi&family=Rakkas&family=Scheherazade+New&family=Tajawal&display=swap');
 
 * {
     box-sizing: border-box;
@@ -11,17 +11,11 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     background:
-        radial-gradient(circle at 20% 20%, #5b21b6 0%, transparent 30%),
-        radial-gradient(circle at 80% 80%, #0369a1 0%, transparent 30%),
-        linear-gradient(135deg, #050505, #111827, #020617);
+        radial-gradient(circle at 15% 20%, #6d28d9 0%, transparent 30%),
+        radial-gradient(circle at 85% 80%, #0284c7 0%, transparent 30%),
+        linear-gradient(135deg, #020617, #111827, #050505);
     background-size: 200% 200%;
     animation: backgroundMove 12s ease infinite;
-}
-
-@keyframes backgroundMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
 }
 
 .container {
@@ -32,7 +26,7 @@ body {
 
 h1 {
     font-size: clamp(30px, 6vw, 55px);
-    margin-bottom: 8px;
+    margin: 10px 0;
     animation: fadeDown .8s ease;
 }
 
@@ -107,19 +101,41 @@ button:hover {
     margin-top: 25px;
     padding: 15px;
     border-radius: 20px;
-    background: rgba(255,255,255,.06);
+    background:
+        linear-gradient(45deg, #ddd 25%, transparent 25%),
+        linear-gradient(-45deg, #ddd 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ddd 75%),
+        linear-gradient(-45deg, transparent 75%, #ddd 75%);
+    background-size: 25px 25px;
+    background-position: 0 0, 0 12px, 12px -12px, -12px 0;
 }
 
 #preview {
     min-height: 180px;
     padding: 45px 25px;
-    border-radius: 15px;
-    background: white;
+    background: transparent;
     color: black;
     font-size: 70px;
     direction: rtl;
     overflow-wrap: break-word;
-    transition: font-family .3s ease, color .3s ease, font-size .3s ease;
+    transition:
+        font-family .25s ease,
+        color .25s ease,
+        font-size .25s ease;
+}
+
+@keyframes backgroundMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 @keyframes fadeDown {
@@ -127,6 +143,7 @@ button:hover {
         opacity: 0;
         transform: translateY(-30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -138,13 +155,18 @@ button:hover {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-@media(max-width:600px) {
+@media (max-width: 600px) {
+
+    .container {
+        width: 94%;
+    }
 
     .editor {
         padding: 15px;
