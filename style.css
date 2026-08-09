@@ -11,11 +11,11 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     background:
-        radial-gradient(circle at 15% 20%, #6d28d9 0%, transparent 30%),
-        radial-gradient(circle at 85% 80%, #0284c7 0%, transparent 30%),
+        radial-gradient(circle at 15% 20%, #6d28d9, transparent 30%),
+        radial-gradient(circle at 85% 80%, #0284c7, transparent 30%),
         linear-gradient(135deg, #020617, #111827, #050505);
     background-size: 200% 200%;
-    animation: backgroundMove 12s ease infinite;
+    animation: bgMove 12s ease infinite;
 }
 
 .container {
@@ -27,7 +27,6 @@ body {
 h1 {
     font-size: clamp(30px, 6vw, 55px);
     margin: 10px 0;
-    animation: fadeDown .8s ease;
 }
 
 .subtitle {
@@ -41,8 +40,6 @@ h1 {
     background: rgba(255,255,255,.08);
     border: 1px solid rgba(255,255,255,.12);
     backdrop-filter: blur(18px);
-    box-shadow: 0 20px 60px rgba(0,0,0,.35);
-    animation: fadeUp .8s ease;
 }
 
 textarea {
@@ -57,10 +54,6 @@ textarea {
     color: white;
     font-size: 25px;
     direction: rtl;
-}
-
-textarea:focus {
-    box-shadow: 0 0 0 2px #8b5cf6;
 }
 
 .controls {
@@ -92,39 +85,28 @@ button {
 }
 
 button:hover {
-    transform: translateY(-3px) scale(1.03);
+    transform: translateY(-3px);
     background: #8b5cf6;
-    box-shadow: 0 10px 25px rgba(124,58,237,.35);
 }
 
 .preview-box {
     margin-top: 25px;
     padding: 15px;
     border-radius: 20px;
-    background:
-        linear-gradient(45deg, #ddd 25%, transparent 25%),
-        linear-gradient(-45deg, #ddd 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #ddd 75%),
-        linear-gradient(-45deg, transparent 75%, #ddd 75%);
-    background-size: 25px 25px;
-    background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+    background: transparent;
 }
 
 #preview {
     min-height: 180px;
     padding: 45px 25px;
-    background: transparent;
+    background: transparent !important;
     color: black;
     font-size: 70px;
     direction: rtl;
     overflow-wrap: break-word;
-    transition:
-        font-family .25s ease,
-        color .25s ease,
-        font-size .25s ease;
 }
 
-@keyframes backgroundMove {
+@keyframes bgMove {
     0% {
         background-position: 0% 50%;
     }
@@ -135,30 +117,6 @@ button:hover {
 
     100% {
         background-position: 0% 50%;
-    }
-}
-
-@keyframes fadeDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
     }
 }
 
