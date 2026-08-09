@@ -5,7 +5,7 @@ const preview = document.getElementById("preview");
 const download = document.getElementById("download");
 
 function update() {
-    preview.textContent = text.value || "اكتب النص هنا";
+    preview.textContent = text.value || " ";
     preview.style.fontFamily = `"${font.value}", sans-serif`;
     preview.style.color = color.value;
 }
@@ -15,14 +15,20 @@ font.addEventListener("change", update);
 color.addEventListener("input", update);
 
 download.addEventListener("click", async () => {
+
+    await document.fonts.ready;
+
     const canvas = await html2canvas(preview, {
-        scale: 2,
-        backgroundColor: null
+        backgroundColor: null,
+        scale: 3,
+        useCORS: true
     });
 
     const link = document.createElement("a");
-    link.download = "arabic-design.png";
+
+    link.download = "arabic-text.png";
     link.href = canvas.toDataURL("image/png");
+
     link.click();
 });
 

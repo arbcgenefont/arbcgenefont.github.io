@@ -7,50 +7,42 @@
 body {
     margin: 0;
     min-height: 100vh;
+    background: linear-gradient(135deg,#020617,#111827,#050505);
     color: white;
-    font-family: Arial, sans-serif;
+    font-family: Arial,sans-serif;
     text-align: center;
-    background:
-        radial-gradient(circle at 15% 20%, #6d28d9, transparent 30%),
-        radial-gradient(circle at 85% 80%, #0284c7, transparent 30%),
-        linear-gradient(135deg, #020617, #111827, #050505);
-    background-size: 200% 200%;
-    animation: bgMove 12s ease infinite;
 }
 
 .container {
-    width: min(1100px, 92%);
+    width: 92%;
+    max-width: 1100px;
     margin: auto;
-    padding: 35px 0;
+    padding: 40px 0;
 }
 
 h1 {
-    font-size: clamp(30px, 6vw, 55px);
-    margin: 10px 0;
+    font-size: clamp(30px,6vw,55px);
 }
 
 .subtitle {
     opacity: .7;
-    margin-bottom: 30px;
 }
 
 .editor {
     padding: 25px;
     border-radius: 25px;
     background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.12);
-    backdrop-filter: blur(18px);
+    backdrop-filter: blur(15px);
 }
 
 textarea {
     width: 100%;
     min-height: 130px;
     padding: 18px;
-    border: none;
-    outline: none;
-    resize: vertical;
+    border: 0;
+    outline: 0;
     border-radius: 15px;
-    background: rgba(0,0,0,.35);
+    background: rgba(0,0,0,.4);
     color: white;
     font-size: 25px;
     direction: rtl;
@@ -58,17 +50,17 @@ textarea {
 
 .controls {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 10px;
-    margin-top: 20px;
+    margin: 20px 0;
 }
 
 select,
 input,
 button {
     padding: 12px 15px;
-    border: none;
+    border: 0;
     border-radius: 12px;
     font-size: 15px;
 }
@@ -81,58 +73,32 @@ button {
     background: #7c3aed;
     color: white;
     cursor: pointer;
-    transition: .25s;
 }
 
 button:hover {
-    transform: translateY(-3px);
     background: #8b5cf6;
+    transform: translateY(-2px);
 }
 
-.preview-box {
-    margin-top: 25px;
-    padding: 15px;
-    border-radius: 20px;
-    background: transparent;
-}
-
+/* ONLY the text area is exported */
 #preview {
-    min-height: 180px;
-    padding: 45px 25px;
+    width: fit-content;
+    max-width: 100%;
+    min-width: 200px;
+    min-height: 150px;
+    margin: 30px auto;
+    padding: 40px;
     background: transparent !important;
     color: black;
     font-size: 70px;
     direction: rtl;
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
 }
 
-@keyframes bgMove {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
-@media (max-width: 600px) {
-
-    .container {
-        width: 94%;
-    }
-
-    .editor {
-        padding: 15px;
-    }
-
+@media(max-width:600px) {
     #preview {
         font-size: 50px;
-        padding: 35px 15px;
+        padding: 25px;
     }
 
     select,
