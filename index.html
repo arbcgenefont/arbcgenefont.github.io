@@ -3,60 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Arabic Font Generator</title>
+<title>مولد الخط العربي — Arabic Font Generator</title>
+<meta name="description" content="اكتب نصك وشاهده حيًّا بعشرات الخطوط العربية، مع تحكم كامل بالحجم واللون والمحاذاة، وتنزيل النتيجة صورة.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@300;400;600;800&family=Changa:wght@400;700&family=El+Messiri:wght@400;700&family=Harmattan&family=Jomhuria&family=Katibeh&family=Lateef&family=Lemonada:wght@400;700&family=Mada:wght@400;700&family=Marhey&family=Markazi+Text:wght@400;700&family=Noto+Kufi+Arabic:wght@400;600;800&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Rakkas&family=Reem+Kufi:wght@400;700&family=Scheherazade+New:wght@400;700&family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div class="container">
+<div class="page">
 
-<h1>مولد الخط العربي</h1>
-<p class="subtitle">اكتب النص واختر الخط</p>
+  <header class="hero">
+    <p class="eyebrow">ورّاقة رقمية · معاينة الخطوط العربية حيًّا</p>
+    <h1 class="title">مولد الخط العربي</h1>
+    <p class="subtitle">اكتب نصك، تصفّح الخطوط كأنها صفحات مخطوطة، واختر ما يليق بك</p>
+  </header>
 
-<div class="editor">
+  <main class="workspace">
 
-<textarea id="text">السلام عليكم</textarea>
+    <section class="folio" aria-label="المعاينة">
+      <span class="corner corner--tl" aria-hidden="true"></span>
+      <span class="corner corner--tr" aria-hidden="true"></span>
+      <span class="corner corner--bl" aria-hidden="true"></span>
+      <span class="corner corner--br" aria-hidden="true"></span>
 
-<div class="controls">
+      <textarea id="text" class="preview-text" spellcheck="false">السلام عليكم</textarea>
 
-<select id="font">
-<option value="Amiri">Amiri</option>
-<option value="Aref Ruqaa">Aref Ruqaa</option>
-<option value="Cairo">Cairo</option>
-<option value="Changa">Changa</option>
-<option value="El Messiri">El Messiri</option>
-<option value="Lateef">Lateef</option>
-<option value="Noto Kufi Arabic">Noto Kufi Arabic</option>
-<option value="Noto Naskh Arabic">Noto Naskh Arabic</option>
-<option value="Reem Kufi">Reem Kufi</option>
-<option value="Rakkas">Rakkas</option>
-<option value="Tajawal">Tajawal</option>
-<option value="Scheherazade New">Scheherazade New</option>
-<option value="Katibeh">Katibeh</option>
-<option value="Lemonada">Lemonada</option>
-<option value="Mada">Mada</option>
-<option value="Markazi Text">Markazi Text</option>
-<option value="Mirza">Mirza</option>
-<option value="Readex Pro">Readex Pro</option>
-<option value="Almarai">Almarai</option>
-<option value="Harmattan">Harmattan</option>
-</select>
+      <div class="folio-meta">
+        <span id="activeFontLabel">Amiri</span>
+        <span class="dot" aria-hidden="true">·</span>
+        <span id="charCount">12 حرفًا</span>
+      </div>
+    </section>
 
-<input type="color" id="color" value="#000000">
+    <aside class="controls" aria-label="أدوات التحكم">
 
-<button id="download">تحميل PNG شفاف</button>
+      <div class="control-block">
+        <h2 class="control-title">الحجم</h2>
+        <input type="range" id="fontSize" min="16" max="120" value="44">
+        <output id="fontSizeVal" for="fontSize">44px</output>
+      </div>
+
+      <div class="control-block">
+        <h2 class="control-title">التباعد بين السطور</h2>
+        <input type="range" id="lineHeight" min="100" max="220" value="150">
+        <output id="lineHeightVal" for="lineHeight">1.5</output>
+      </div>
+
+      <div class="control-block control-block--row">
+        <div>
+          <h2 class="control-title">لون الحبر</h2>
+          <input type="color" id="inkColor" value="#221b14">
+        </div>
+        <div>
+          <h2 class="control-title">لون الورق</h2>
+          <input type="color" id="paperColor" value="#f6efe2">
+        </div>
+      </div>
+
+      <div class="control-block">
+        <h2 class="control-title">المحاذاة</h2>
+        <div class="align-group" role="group" aria-label="محاذاة النص">
+          <button type="button" class="align-btn" data-align="right" aria-pressed="true">يمين</button>
+          <button type="button" class="align-btn" data-align="center" aria-pressed="false">وسط</button>
+          <button type="button" class="align-btn" data-align="left" aria-pressed="false">يسار</button>
+          <button type="button" class="align-btn" data-align="justify" aria-pressed="false">ضبط</button>
+        </div>
+      </div>
+
+      <div class="control-block control-block--actions">
+        <button type="button" id="copyBtn" class="action-btn">نسخ النص</button>
+        <button type="button" id="downloadBtn" class="action-btn action-btn--primary">تنزيل صورة</button>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <section class="gallery" aria-label="اختر خطًا">
+    <h2 class="gallery-title">اختر خطًا</h2>
+    <div id="fontGallery" class="gallery-grid" role="listbox" aria-label="قائمة الخطوط"></div>
+  </section>
 
 </div>
 
-<div id="preview">السلام عليكم</div>
-
-</div>
-
-</div>
-
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script src="script.js"></script>
-
 </body>
 </html>
+
