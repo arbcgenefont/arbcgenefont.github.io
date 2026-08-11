@@ -2,11 +2,13 @@
   "use strict";
 
   const FONTS = [
-    "Amiri", "Aref Ruqaa", "Cairo", "Changa", "El Messiri",
-    "Harmattan", "Jomhuria", "Katibeh", "Lateef", "Lemonada",
-    "Mada", "Marhey", "Markazi Text", "Noto Kufi Arabic",
-    "Noto Naskh Arabic", "Noto Sans Arabic", "Rakkas",
-    "Reem Kufi", "Scheherazade New", "Tajawal"
+    "Alexandria", "Almarai", "Amiri", "Aref Ruqaa", "Baloo Bhaijaan 2",
+    "Cairo", "Changa", "El Messiri", "Fustat", "Gulzar",
+    "Harmattan", "IBM Plex Sans Arabic", "Jomhuria", "Katibeh", "Lateef",
+    "Lemonada", "Mada", "Marhey", "Markazi Text", "Mirza",
+    "Noto Kufi Arabic", "Noto Naskh Arabic", "Noto Sans Arabic", "Qahiri",
+    "Rakkas", "Readex Pro", "Reem Kufi", "Scheherazade New", "Tajawal",
+    "Vazirmatn"
   ];
 
   const textEl = document.getElementById("text");
@@ -125,84 +127,98 @@
     setTimeout(() => { btn.textContent = original; }, 1500);
   }
 
-  function downloadAsImage() {
-    const canvas = document.createElement("canvas");
-    const scale = 4; // high-res export, crisp at large sizes
-    const width = 1000;
-    const padding = 60;
-    const fontSize = parseInt(fontSizeInput.value, 10);
-    const lineHeight = fontSize * parseFloat(lineHeightVal.textContent || "1.5");
-    const lines = wrapText(textEl.value, fontSize, width - padding * 2);
-    const height = Math.max(240, padding * 2 + lines.length * lineHeight);
-
-    canvas.width = width * scale;
-    canvas.height = height * scale;
-    const ctx = canvas.getContext("2d");
-    ctx.scale(scale, scale);
-
-    // Only paint a background if the user did NOT ask for transparency
-    if (!transparentBg.checked) {
-      ctx.fillStyle = paperColor.value;
-      ctx.fillRect(0, 0, width, height);
-    }
-
-    ctx.fillStyle = inkColor.value;
-    ctx.font = `${fontSize}px "${state.font}"`;
-    ctx.direction = "rtl";
-    ctx.textAlign = state.align === "left" ? "left" : state.align === "center" ? "center" : "right";
-    ctx.textBaseline = "alphabetic";
-
-    const x = ctx.textAlign === "right" ? width - padding
-      : ctx.textAlign === "center" ? width / 2
-      : padding;
-
-    lines.forEach((line, i) => {
-      ctx.fillText(line, x, padding + fontSize + i * lineHeight);
-    });
-
+  function triggerDownload(href, filename) {
     const link = document.createElement("a");
-    link.download = "arabic-font.png";
-    link.href = canvas.toDataURL("image/png");
+    link.href = href;
+    link.download = filename;
+    link.style.display = "none";
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+  }
+
+  function downloadAsImage() {
+    try {
+      const canvas = document.createElement("canvas");
+      const scale = 4; // high-res export, crisp at large sizes
+      const width = 1000;
+      const padding = 60;
+      const fontSize = parseInt(fontSizeInput.value, 10);
+      const lineHeight = fontSize * parseFloat(lineHeightVal.textContent || "1.5");
+      const lines = wrapText(textEl.value, fontSize, width - padding * 2);
+      const height = Math.max(240, padding * 2 + lines.length * lineHeight);
+
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(scale, scale);
+
+      // Only paint a background if the user did NOT ask for transparency
+      if (!transparentBg.checked) {
+        ctx.fillStyle = paperColor.value;
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      ctx.fillStyle = inkColor.value;
+      ctx.font = `${fontSize}px "${state.font}"`;
+      ctx.direction = "rtl";
+      ctx.textAlign = state.align === "left" ? "left" : state.align === "center" ? "center" : "right";
+      ctx.textBaseline = "alphabetic";
+
+      const x = ctx.textAlign === "right" ? width - padding
+        : ctx.textAlign === "center" ? width / 2
+        : padding;
+
+      lines.forEach((line, i) => {
+        ctx.fillText(line, x, padding + fontSize + i * lineHeight);
+      });
+
+      triggerDownload(canvas.toDataURL("image/png"), "arabic-font.png");
+    } catch (err) {
+      console.error("PNG export failed:", err);
+      flashButton(downloadPngBtn, "تعذّر التنزيل");
+    }
   }
 
   function downloadAsSvg() {
     // True vector export: text stays as <text> elements, not pixels.
     // Note: the font must be installed/available on whatever app opens the SVG,
     // since we reference it by name rather than embedding outlines.
-    const width = 1000;
-    const padding = 60;
-    const fontSize = parseInt(fontSizeInput.value, 10);
-    const lineHeight = fontSize * parseFloat(lineHeightVal.textContent || "1.5");
-    const lines = wrapText(textEl.value, fontSize, width - padding * 2);
-    const height = Math.max(240, padding * 2 + lines.length * lineHeight);
+    try {
+      const width = 1000;
+      const padding = 60;
+      const fontSize = parseInt(fontSizeInput.value, 10);
+      const lineHeight = fontSize * parseFloat(lineHeightVal.textContent || "1.5");
+      const lines = wrapText(textEl.value, fontSize, width - padding * 2);
+      const height = Math.max(240, padding * 2 + lines.length * lineHeight);
 
-    const anchor = state.align === "left" ? "start" : state.align === "center" ? "middle" : "end";
-    const x = anchor === "end" ? width - padding : anchor === "middle" ? width / 2 : padding;
+      const anchor = state.align === "left" ? "start" : state.align === "center" ? "middle" : "end";
+      const x = anchor === "end" ? width - padding : anchor === "middle" ? width / 2 : padding;
 
-    const bgRect = transparentBg.checked
-      ? ""
-      : `<rect width="${width}" height="${height}" fill="${paperColor.value}"/>`;
+      const bgRect = transparentBg.checked
+        ? ""
+        : `<rect width="${width}" height="${height}" fill="${paperColor.value}"/>`;
 
-    const textLines = lines.map((line, i) => {
-      const y = padding + fontSize + i * lineHeight;
-      const safe = escapeXml(line);
-      return `<text x="${x}" y="${y}" text-anchor="${anchor}" direction="rtl">${safe}</text>`;
-    }).join("\n    ");
+      const textLines = lines.map((line, i) => {
+        const y = padding + fontSize + i * lineHeight;
+        const safe = escapeXml(line);
+        return `<text x="${x}" y="${y}" text-anchor="${anchor}" direction="rtl">${safe}</text>`;
+      }).join("\n    ");
 
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
     ${bgRect}
     <style>text { font-family: '${state.font}', serif; font-size: ${fontSize}px; fill: ${inkColor.value}; }</style>
     ${textLines}
     </svg>`;
 
-    const blob = new Blob([svg], { type: "image/svg+xml" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.download = "arabic-font.svg";
-    link.href = url;
-    link.click();
-    URL.revokeObjectURL(url);
+      const blob = new Blob([svg], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(blob);
+      triggerDownload(url, "arabic-font.svg");
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (err) {
+      console.error("SVG export failed:", err);
+      flashButton(downloadSvgBtn, "تعذّر التنزيل");
+    }
   }
 
   function escapeXml(str) {
