@@ -22,7 +22,9 @@
   const paperColor = document.getElementById("paperColor");
   const alignBtns = document.querySelectorAll(".align-btn");
   const copyBtn = document.getElementById("copyBtn");
-  const downloadBtn = document.getElementById("downloadBtn");
+  const downloadPngBtn = document.getElementById("downloadPngBtn");
+  const downloadSvgBtn = document.getElementById("downloadSvgBtn");
+  const transparentBg = document.getElementById("transparentBg");
   const folio = document.querySelector(".folio");
 
   const state = {
@@ -94,6 +96,8 @@
     persist();
   });
 
+  transparentBg.addEventListener("change", persist);
+
   alignBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       state.align = btn.dataset.align;
@@ -112,7 +116,8 @@
     }
   });
 
-  downloadBtn.addEventListener("click", () => downloadAsImage());
+  downloadPngBtn.addEventListener("click", () => downloadAsImage());
+  downloadSvgBtn.addEventListener("click", () => downloadAsSvg());
 
   function flashButton(btn, message) {
     const original = btn.textContent;
@@ -122,7 +127,7 @@
 
   function downloadAsImage() {
     const canvas = document.createElement("canvas");
-    const scale = 2; // crisp export
+    const scale = 4; // high-res export, crisp at large sizes
     const width = 1000;
     const padding = 60;
     const fontSize = parseInt(fontSizeInput.value, 10);
@@ -135,8 +140,11 @@
     const ctx = canvas.getContext("2d");
     ctx.scale(scale, scale);
 
-    ctx.fillStyle = paperColor.value;
-    ctx.fillRect(0, 0, width, height);
+    // Only paint a background if the user did NOT ask for transparency
+    if (!transparentBg.checked) {
+      ctx.fillStyle = paperColor.value;
+      ctx.fillRect(0, 0, width, height);
+    }
 
     ctx.fillStyle = inkColor.value;
     ctx.font = `${fontSize}px "${state.font}"`;
@@ -156,6 +164,52 @@
     link.download = "arabic-font.png";
     link.href = canvas.toDataURL("image/png");
     link.click();
+  }
+
+  function downloadAsSvg() {
+    // True vector export: text stays as <text> elements, not pixels.
+    // Note: the font must be installed/available on whatever app opens the SVG,
+    // since we reference it by name rather than embedding outlines.
+    const width = 1000;
+    const padding = 60;
+    const fontSize = parseInt(fontSizeInput.value, 10);
+    const lineHeight = fontSize * parseFloat(lineHeightVal.textContent || "1.5");
+    const lines = wrapText(textEl.value, fontSize, width - padding * 2);
+    const height = Math.max(240, padding * 2 + lines.length * lineHeight);
+
+    const anchor = state.align === "left" ? "start" : state.align === "center" ? "middle" : "end";
+    const x = anchor === "end" ? width - padding : anchor === "middle" ? width / 2 : padding;
+
+    const bgRect = transparentBg.checked
+      ? ""
+      : `<rect width="${width}" height="${height}" fill="${paperColor.value}"/>`;
+
+    const textLines = lines.map((line, i) => {
+      const y = padding + fontSize + i * lineHeight;
+      const safe = escapeXml(line);
+      return `<text x="${x}" y="${y}" text-anchor="${anchor}" direction="rtl">${safe}</text>`;
+    }).join("\n    ");
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    ${bgRect}
+    <style>text { font-family: '${state.font}', serif; font-size: ${fontSize}px; fill: ${inkColor.value}; }</style>
+    ${textLines}
+    </svg>`;
+
+    const blob = new Blob([svg], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = "arabic-font.svg";
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function escapeXml(str) {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
   function wrapText(text, fontSize, maxWidth) {
@@ -191,7 +245,8 @@
         fontSize: fontSizeInput.value,
         lineHeight: lineHeightInput.value,
         ink: inkColor.value,
-        paper: paperColor.value
+        paper: paperColor.value,
+        transparent: transparentBg.checked
       }));
     } catch (err) { /* ignore storage errors */ }
   }
@@ -220,6 +275,7 @@
         alignBtns.forEach((b) => b.setAttribute("aria-pressed", b.dataset.align === saved.align ? "true" : "false"));
       }
       if (saved.font) selectFont(saved.font);
+      if (typeof saved.transparent === "boolean") transparentBg.checked = saved.transparent;
     } catch (err) { /* ignore */ }
   }
 

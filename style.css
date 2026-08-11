@@ -223,6 +223,22 @@ input[type="color"] {
   color: var(--paper);
 }
 
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.checkbox-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--emerald);
+  cursor: pointer;
+}
+
 .control-block--actions {
   display: flex;
   flex-direction: column;
