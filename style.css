@@ -1,0 +1,10 @@
+/* style.css */
+* { box-sizing: border-box; }
+body { background: #1e1e1e; display: flex; justify-content: center; padding-top: 5rem; }
+#targetInput {
+    width: 400px; padding: 12px 18px;
+    font-size: 1.2rem; border: 2px solid #555; border-radius: 8px;
+    background: #2d2d2d; color: #eee; outline: none;
+}
+#targetInput:focus { border-color: #88aaff; }
+

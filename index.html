@@ -1,102 +1,13 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>مولد الخط العربي — Arabic Font Generator</title>
-<meta name="description" content="اكتب نصك وشاهده حيًّا بعشرات الخطوط العربية، مع تحكم كامل بالحجم واللون والمحاذاة، وتنزيل النتيجة صورة.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;700&family=Almarai:wght@400;700&family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Baloo+Bhaijaan+2:wght@400;700&family=Cairo:wght@300;400;600;800&family=Changa:wght@400;700&family=El+Messiri:wght@400;700&family=Fustat:wght@400;700&family=Gulzar&family=Harmattan&family=IBM+Plex+Sans+Arabic:wght@400;700&family=Jomhuria&family=Katibeh&family=Lateef&family=Lemonada:wght@400;700&family=Mada:wght@400;700&family=Marhey&family=Markazi+Text:wght@400;700&family=Mirza:wght@400;700&family=Noto+Kufi+Arabic:wght@400;600;800&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Qahiri&family=Rakkas&family=Readex+Pro:wght@400;700&family=Reem+Kufi:wght@400;700&family=Scheherazade+New:wght@400;700&family=Tajawal:wght@300;400;700&family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>лог</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<div class="page">
-
-  <header class="hero">
-    <p class="eyebrow">ورّاقة رقمية · معاينة الخطوط العربية حيًّا</p>
-    <h1 class="title">مولد الخط العربي</h1>
-    <p class="subtitle">اكتب نصك، تصفّح الخطوط كأنها صفحات مخطوطة، واختر ما يليق بك</p>
-  </header>
-
-  <main class="workspace">
-
-    <section class="folio" aria-label="المعاينة">
-      <span class="corner corner--tl" aria-hidden="true"></span>
-      <span class="corner corner--tr" aria-hidden="true"></span>
-      <span class="corner corner--bl" aria-hidden="true"></span>
-      <span class="corner corner--br" aria-hidden="true"></span>
-
-      <textarea id="text" class="preview-text" spellcheck="false">السلام عليكم</textarea>
-
-      <div class="folio-meta">
-        <span id="activeFontLabel">Amiri</span>
-        <span class="dot" aria-hidden="true">·</span>
-        <span id="charCount">12 حرفًا</span>
-      </div>
-    </section>
-
-    <aside class="controls" aria-label="أدوات التحكم">
-
-      <div class="control-block">
-        <h2 class="control-title">الحجم</h2>
-        <input type="range" id="fontSize" min="16" max="120" value="44">
-        <output id="fontSizeVal" for="fontSize">44px</output>
-      </div>
-
-      <div class="control-block">
-        <h2 class="control-title">التباعد بين السطور</h2>
-        <input type="range" id="lineHeight" min="100" max="220" value="150">
-        <output id="lineHeightVal" for="lineHeight">1.5</output>
-      </div>
-
-      <div class="control-block control-block--row">
-        <div>
-          <h2 class="control-title">لون الحبر</h2>
-          <input type="color" id="inkColor" value="#221b14">
-        </div>
-        <div>
-          <h2 class="control-title">لون الورق</h2>
-          <input type="color" id="paperColor" value="#f6efe2">
-        </div>
-      </div>
-
-      <div class="control-block">
-        <h2 class="control-title">المحاذاة</h2>
-        <div class="align-group" role="group" aria-label="محاذاة النص">
-          <button type="button" class="align-btn" data-align="right" aria-pressed="true">يمين</button>
-          <button type="button" class="align-btn" data-align="center" aria-pressed="false">وسط</button>
-          <button type="button" class="align-btn" data-align="left" aria-pressed="false">يسار</button>
-          <button type="button" class="align-btn" data-align="justify" aria-pressed="false">ضبط</button>
-        </div>
-      </div>
-
-      <div class="control-block">
-        <label class="checkbox-row">
-          <input type="checkbox" id="transparentBg">
-          <span>خلفية شفافة (بدون لون الورق)</span>
-        </label>
-      </div>
-
-      <div class="control-block control-block--actions">
-        <button type="button" id="copyBtn" class="action-btn">نسخ النص</button>
-        <button type="button" id="downloadPngBtn" class="action-btn action-btn--primary">تنزيل PNG</button>
-        <button type="button" id="downloadSvgBtn" class="action-btn">تنزيل SVG (متجهي)</button>
-      </div>
-
-    </aside>
-
-  </main>
-
-  <section class="gallery" aria-label="اختر خطًا">
-    <h2 class="gallery-title">اختر خطًا</h2>
-    <div id="fontGallery" class="gallery-grid" role="listbox" aria-label="قائمة الخطوط"></div>
-  </section>
-
-</div>
-
-<script src="script.js"></script>
+    <input type="text" id="targetInput" placeholder="введите текст...">
+    <script src="script.js"></script>
 </body>
 </html>
-

